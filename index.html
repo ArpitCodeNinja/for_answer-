@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI Nexus - Unified Search for 6 AI Tools</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-deep: #020617;
+            --bg-accent: #0f172a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --gradient-accent: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+            overflow-x: hidden;
+            padding: 1rem;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-deep);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 2.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: var(--gradient-accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .sub {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 1.25rem;
+        }
+
+        .search-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-card:focus-within {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        #globalSearch {
+            flex: 1;
+            padding: 1.25rem 1.5rem;
+            font-size: 1.25rem;
+            border: none;
+            background: transparent;
+            outline: none;
+            color: white;
+        }
+
+        #globalSearch::placeholder {
+            color: #4b5563;
+        }
+
+        .search-btn {
+            background: var(--gradient-accent);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 1.1rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .copy-query-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-query-btn.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #334155;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background: var(--gradient-accent);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .small-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.6rem 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .ai-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .open-tab-btn {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #60a5fa;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .iframe-container {
+            position: relative;
+            background: #020617;
+            height: 550px;
+        }
+
+        .ai-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .fallback-msg {
+            padding: 1.25rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--glass-border);
+            padding: 2.5rem 1rem;
+        }
+
+        .app-footer {
+            margin-top: 5rem;
+            padding: 3rem 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            background: linear-gradient(to bottom, transparent, rgba(15, 23, 42, 0.4));
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            border: 1px solid var(--glass-border);
+            margin: 0 auto 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .footer-content p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 1.5rem;
+                border-radius: 1.5rem;
+            }
+
+            .search-card {
+                flex-direction: column;
+                padding: 0.5rem;
+            }
+
+            #globalSearch {
+                width: 100%;
+                text-align: center;
+            }
+
+            .search-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .ai-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .iframe-container {
+                height: 450px;
+            }
+
+            .app-footer {
+                margin-top: 3rem;
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="hero-section">
+            <h1>
+                ✨ AI Omnibar
+                <span class="badge">6 engines · one query</span>
+            </h1>
+            <p class="sub">Unified intelligence dashboard. Search once across ChatGPT, DeepSeek, Claude, Perplexity,
+                Gemini & Felo simultaneously.</p>
+
+            <div class="search-container">
+                <div class="search-card">
+                    <input type="text" id="globalSearch"
+                        placeholder="Ask anything... e.g., 'Latest AI breakthroughs 2026'" autocomplete="off">
+                    <button class="search-btn" id="searchBtn">
+                        <span>🚀 Search All AI</span>
+                    </button>
+                </div>
+
+                <div class="controls-row">
+                    <button class="copy-query-btn" id="manualCopyBtn">
+                        <span>📋 Copy Question</span>
+                    </button>
+
+                    <div class="toggle-container">
+                        <label class="switch">
+                            <input type="checkbox" id="autoOpenToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label" title="Automatically opens all 6 AI tabs after you finish typing">
+                            Auto-open tabs
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-bar">
+                <div class="batch-action">
+                    <button class="small-btn" id="openAllTabsBtn">📂 Open all tabs</button>
+                    <button class="small-btn" id="refreshAllIframes">🔄 Reload frames</button>
+                </div>
+                <div class="tip-text">
+                    <span>💡 Tip: If frames are blocked, use "Open in tab" for full access.</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="ai-grid" id="aiGrid"></div>
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-status">
+                    <span class="pulse-dot"></span>
+                    <span>Systems Operational — Multi-Engine Sync Active</span>
+                </div>
+                <p>⚡ Direct UI Automation: Real-time search injection across 6 AI platforms.</p>
+                <p>🔒 Privacy Focused: No search data is stored. All queries are handled locally in your browser.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+
+        const aiTools = [
+            {
+                name: "ChatGPT",
+                icon: "🤖",
+                baseUrl: "https://chatgpt.com/",
+                searchUrlTemplate: (query) => `https://chatgpt.com/?q=${encodeURIComponent(query)}`,
+                fallbackOpen: true
+            },
+            {
+                name: "DeepSeek",
+                icon: "🔍",
+                baseUrl: "https://chat.deepseek.com/",
+                searchUrlTemplate: (query) => `https://chat.deepseek.com/`,
+                fallbackOpen: true,
+                needsPaste: true
+            },
+            {
+                name: "Claude",
+                icon: "🧠",
+                baseUrl: "https://claude.ai/new",
+                searchUrlTemplate: (query) => `https://claude.ai/new?q=${encodeURIComponent(query)}`,
+                fallbackOpen: true
+            },
+            {
+                name: "Perplexity",
+                icon: "🌐",
+                baseUrl: "https://www.perplexity.ai/",
+                searchUrlTemplate: (query) => `https://www.perplexity.ai/search?q=${encodeURIComponent(query)}`,
+                fallbackOpen: true
+            },
+            {
+                name: "Gemini",
+                icon: "✨",
+                baseUrl: "https://gemini.google.com/app",
+                searchUrlTemplate: (query) => `https://gemini.google.com/app`, // Gemini does not support native q param
+                fallbackOpen: true,
+                needsPaste: true
+            },
+            {
+                name: "Felo",
+                icon: "🧩",
+                baseUrl: "https://felo.ai/search",
+                searchUrlTemplate: (query) => `https://felo.ai/search?q=${encodeURIComponent(query)}`,
+                fallbackOpen: true
+            }
+        ];
+
+        // Robust copy to clipboard with fallback for non-secure contexts (like local files)
+        function copyToClipboard(text) {
+            if (!text) return;
+
+            // Modern API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    updateCopyBtnUI();
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) updateCopyBtnUI();
+            } catch (err) {
+                console.error('Fallback copy failed', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function updateCopyBtnUI() {
+            const btn = document.getElementById("manualCopyBtn");
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "✅ Question Copied!";
+            btn.classList.add("success");
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove("success");
+            }, 2000);
+        }
+
+        // Store references to iframe elements and current query
+        let currentQuery = "";
+        const iframeRefs = new Map(); // key: index, value: iframe element
+
+        // Helper: open prefilled URL in new tab for each AI based on current query
+        function openAllInNewTabs() {
+            if (!currentQuery.trim()) {
+                alert("Please enter a search query first.");
+                return;
+            }
+            for (let i = 0; i < aiTools.length; i++) {
+                const tool = aiTools[i];
+                const searchUrl = tool.searchUrlTemplate(currentQuery);
+                window.open(searchUrl, "_blank");
+            }
+        }
+
+        // Helper: refresh all iframes with current query (best effort, loads direct search URL)
+        function refreshAllIframesWithQuery() {
+            if (!currentQuery.trim()) {
+                alert("Type something in the search bar first.");
+                return;
+            }
+            for (let i = 0; i < aiTools.length; i++) {
+                const iframe = iframeRefs.get(i);
+                if (iframe) {
+                    const tool = aiTools[i];
+                    const prefilledUrl = tool.searchUrlTemplate(currentQuery);
+                    // Update iframe src to pre-filled version. This works for platforms that honor GET params.
+                    iframe.src = prefilledUrl;
+                }
+            }
+        }
+
+
+
+        function performUnifiedSearch(isAuto = false) {
+            const searchInput = document.getElementById("globalSearch");
+            let query = searchInput.value.trim();
+            if (query === "") {
+                if (!isAuto) alert("Please enter a question or topic to search across AI tools.");
+                return;
+            }
+
+            if (isAuto && query === currentQuery) return;
+            currentQuery = query;
+
+            // 1. Update all iframes immediately
+            for (let i = 0; i < aiTools.length; i++) {
+                const iframe = iframeRefs.get(i);
+                if (iframe) {
+                    const tool = aiTools[i];
+                    iframe.src = tool.searchUrlTemplate(currentQuery);
+                }
+            }
+
+            // Copy to clipboard automatically with robust fallback
+            copyToClipboard(query);
+
+            // 2. Open tabs with a small staggered delay (helps bypass some browser flood-protectors)
+            let blockedCount = 0;
+            aiTools.forEach((tool, i) => {
+                setTimeout(() => {
+                    const directUrl = tool.searchUrlTemplate(currentQuery);
+                    try {
+                        const newWin = window.open(directUrl, "_blank");
+                        if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
+                            blockedCount++;
+                        }
+                    } catch (e) {
+                        blockedCount++;
+                    }
+
+                    // On the last tool, check if we need to show the blocker warning
+                    if (i === aiTools.length - 1) {
+                        showSearchFeedback(blockedCount, isAuto);
+                    }
+                }, i * 200); // 200ms delay between tabs
+            });
+        }
+
+        function showSearchFeedback(blockedCount, isAuto) {
+            const existingToast = document.getElementById("searchToast");
+            if (existingToast) existingToast.remove();
+
+            const toastMsg = document.createElement("div");
+            toastMsg.id = "searchToast";
+
+            if (blockedCount > 0) {
+                toastMsg.innerHTML = `
+                    <div style="font-weight:700; margin-bottom:6px; font-size:1rem;">⚠️ Popups Blocked</div>
+                    <div style="font-size:0.85rem; line-height:1.5; opacity:0.9;">
+                        Your browser blocked ${blockedCount} tabs. To fix:<br>
+                        1. Click the <b>popup icon</b> in the address bar.<br>
+                        2. Select <b>"Always allow popups"</b>.<br>
+                        3. Press <b>Enter</b> again to search!
+                    </div>
+                `;
+                toastMsg.style.backgroundColor = "rgba(220, 38, 38, 0.9)";
+                toastMsg.style.borderLeft = "4px solid #ef4444";
+            } else {
+                toastMsg.innerHTML = `<div style="font-weight:600;">🚀 ${isAuto ? 'Auto-opened' : 'Opened'} all 6 AI engines</div>`;
+                toastMsg.style.backgroundColor = "rgba(16, 185, 129, 0.9)";
+                toastMsg.style.borderLeft = "4px solid #10b981";
+            }
+
+            toastMsg.style.position = "fixed";
+            toastMsg.style.bottom = "30px";
+            toastMsg.style.left = "30px";
+            toastMsg.style.right = "30px";
+            toastMsg.style.maxWidth = "400px";
+            toastMsg.style.margin = "0 auto";
+            toastMsg.style.color = "white";
+            toastMsg.style.padding = "20px";
+            toastMsg.style.borderRadius = "1.25rem";
+            toastMsg.style.zIndex = "10000";
+            toastMsg.style.boxShadow = "0 25px 50px -12px rgba(0,0,0,0.5)";
+            toastMsg.style.animation = "slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+
+            document.body.appendChild(toastMsg);
+
+            const duration = blockedCount > 0 ? 10000 : 3500;
+            setTimeout(() => {
+                toastMsg.style.opacity = "0";
+                toastMsg.style.transform = "translateY(20px) scale(0.95)";
+                toastMsg.style.transition = "all 0.5s ease";
+                setTimeout(() => toastMsg.remove(), 500);
+            }, duration);
+        }
+
+        // Function to build AI grid cards with iframe and controls
+        function buildAIGrid() {
+            const grid = document.getElementById("aiGrid");
+            grid.innerHTML = "";
+            aiTools.forEach((tool, idx) => {
+                const card = document.createElement("div");
+                card.className = "ai-card";
+
+                const header = document.createElement("div");
+                header.className = "card-header";
+                header.innerHTML = `
+                <div class="ai-name">${tool.icon} ${tool.name}</div>
+                <button class="open-tab-btn" data-idx="${idx}">🔗 Open in new tab →</button>
+            `;
+
+                const iframeContainer = document.createElement("div");
+                iframeContainer.className = "iframe-container";
+                const iframe = document.createElement("iframe");
+                iframe.className = "ai-iframe";
+                // initial load with base URL (will be overridden on search)
+                iframe.src = tool.baseUrl;
+                iframe.title = `${tool.name} interface`;
+                iframe.sandbox = "allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-top-navigation-by-user-activation"; // enhance compatibility
+                iframeContainer.appendChild(iframe);
+
+                // optional fallback note: some sites block iframe
+                const note = document.createElement("div");
+                note.className = "fallback-msg";
+                let noteText = `⚠️ Iframe may be restricted by ${tool.name}. Use "Open in new tab" for full experience.`;
+
+                if (tool.name === "DeepSeek" || tool.name === "Gemini") {
+                    noteText = `<b>💡 ${tool.name} Hint:</b> This tool blocks auto-fill. We've <b>copied your query</b> — just press <b>Ctrl+V</b> in the new tab!`;
+                }
+
+                note.innerHTML = noteText;
+
+                card.appendChild(header);
+                card.appendChild(iframeContainer);
+                card.appendChild(note);
+                grid.appendChild(card);
+
+                // store iframe reference
+                iframeRefs.set(idx, iframe);
+
+                // attach event to open-tab button (prefilled with current query if exists)
+                const openBtn = header.querySelector(".open-tab-btn");
+                openBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    let queryToUse = currentQuery;
+                    if (!queryToUse) {
+                        const inputVal = document.getElementById("globalSearch").value.trim();
+                        if (inputVal) {
+                            queryToUse = inputVal;
+                            currentQuery = inputVal;
+                        } else {
+                            // open default base url
+                            window.open(tool.baseUrl, "_blank");
+                            return;
+                        }
+                    }
+                    const searchUrl = tool.searchUrlTemplate(queryToUse);
+                    window.open(searchUrl, "_blank");
+                });
+            });
+        }
+
+        // Additional feature: support pressing Enter in search bar
+        function initEventListeners() {
+            const searchInput = document.getElementById("globalSearch");
+            const searchButton = document.getElementById("searchBtn");
+            const openAllTabs = document.getElementById("openAllTabsBtn");
+            const refreshIframes = document.getElementById("refreshAllIframes");
+
+            searchButton.addEventListener("click", performUnifiedSearch);
+            searchInput.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    performUnifiedSearch();
+                }
+            });
+
+            openAllTabs.addEventListener("click", () => {
+                if (!currentQuery.trim() && document.getElementById("globalSearch").value.trim() !== "") {
+                    currentQuery = document.getElementById("globalSearch").value.trim();
+                }
+                if (!currentQuery.trim()) {
+                    alert("Please enter a search query first.");
+                    return;
+                }
+                openAllInNewTabs();
+            });
+
+            refreshIframes.addEventListener("click", () => {
+                if (!currentQuery.trim() && document.getElementById("globalSearch").value.trim() !== "") {
+                    currentQuery = document.getElementById("globalSearch").value.trim();
+                }
+                if (!currentQuery.trim()) {
+                    alert("Please enter a query to refresh AI frames.");
+                    return;
+                }
+                refreshAllIframesWithQuery();
+            });
+
+            document.getElementById("manualCopyBtn").addEventListener("click", () => {
+                const query = document.getElementById("globalSearch").value.trim();
+                if (query) {
+                    copyToClipboard(query);
+                } else {
+                    alert("Please type a question first.");
+                }
+            });
+
+            // Debounce for auto-open
+            let searchTimeout;
+            const autoOpenToggle = document.getElementById("autoOpenToggle");
+
+            searchInput.addEventListener("input", (e) => {
+                if (autoOpenToggle.checked) {
+                    clearTimeout(searchTimeout);
+                    const query = e.target.value.trim();
+                    if (query.length > 3) { // Only auto-open for meaningful queries
+                        searchTimeout = setTimeout(() => {
+                            performUnifiedSearch(true);
+                        }, 1200); // Wait for 1.2s of no typing
+                    }
+                }
+            });
+        }
+
+
+        function enhanceFallbackBehavior() {
+            setTimeout(() => {
+                for (let i = 0; i < aiTools.length; i++) {
+                    const iframe = iframeRefs.get(i);
+                    if (iframe) {
+                        iframe.onerror = () => { console.log(`iframe load error for ${aiTools[i].name}`); };
+                        // Attempt to reload if blank?
+                    }
+                }
+            }, 500);
+        }
+
+        function setDemoHint() {
+            const searchBox = document.getElementById("globalSearch");
+            if (searchBox.value === "") {
+                searchBox.placeholder = "e.g., 'Latest AI breakthroughs 2026' or 'Explain neural networks'";
+            }
+        }
+
+        buildAIGrid();
+        initEventListeners();
+        enhanceFallbackBehavior();
+        setDemoHint();
+
+        // small console note
+        console.log("AI Omnibar ready — Search triggers both iframe updates & new tabs with auto-filled query.");
+    </script>
+</body>
+
+</html>
